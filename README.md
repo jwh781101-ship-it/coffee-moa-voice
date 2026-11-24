@@ -1,2 +1,7 @@
-# coffee-moa-voice
-커피 모아 독립 음성 입력창. 브라우저에서 인식한 문장을 취합앱으로 전달하며 서버에 음성을 저장하지 않습니다.
+# 커피모아
+
+커피모아 앱의 정적 아이콘 자원과 바로가기 안내 페이지입니다.
+
+[커피모아 열기](https://script.google.com/macros/s/AKfycbza2n_Kvvr2bB77T1dLzDszs5ncd288O-4kAKpDfMEXWecpuhS_htvx9LDwtsR3AACvOQ/exec?v=10)
+
+아이콘: 64, 180, 192, 512 픽셀 PNG
