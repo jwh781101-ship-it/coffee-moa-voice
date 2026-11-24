@@ -1,0 +1,25 @@
+{
+  "id": "./home.html",
+  "name": "커피모아",
+  "short_name": "커피모아",
+  "lang": "ko",
+  "start_url": "./home.html?launch=1",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f1e7",
+  "theme_color": "#2d1c14",
+  "icons": [
+    {
+      "src": "./coffee-moa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./coffee-moa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
