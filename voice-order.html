@@ -30,7 +30,7 @@
     <p class="hint">예: “민지님 아이스 아메리카노 두 잔, 수현님 따뜻한 라떼 한 잔”</p>
     <button class="primary" id="listen" type="button"><span aria-hidden="true">●</span> 음성으로 주문 듣기</button>
     <div class="voice-actions" id="voice-actions" hidden><button class="secondary" id="stop" type="button">마이크 끄기</button><button class="quiet" id="recover" type="button">응답이 없나요? 연결 초기화</button></div>
-    <p class="note">마이크 권한이 필요해요. 한 번 듣기를 시작하면 한 주문씩 이어서 말할 수 있어요. 후보 확인 시 합계에 추가돼요. 후보를 확인하는 중에도 마이크가 켜져 있어요. 기기나 브라우저가 인식을 일찍 종료할 수 있으며, 종료되면 다시 말하기를 눌러 주세요.</p>
+    <p class="note">마이크 권한이 필요해요. 한 번에 여러 주문을 말할 때는 메뉴마다 잔수를 말해 주세요. 예: “아아 한 잔, 딸기 바나나 두 잔”. 후보 확인 시 합계에 추가돼요. 후보를 확인하는 중에도 마이크가 켜져 있어요. 기기나 브라우저가 인식을 일찍 종료할 수 있으며, 종료되면 다시 말하기를 눌러 주세요.</p>
     <p id="message" class="message" role="status" aria-live="polite"></p>
   </section>
   <section class="card" aria-labelledby="transcript-title"><div class="section-head"><div><div class="eyebrow">YOUR WORDS</div><h2 id="transcript-title">말한 내용 확인</h2></div><span class="step">01</span></div><p class="hint">인식된 내용을 수정하거나 직접 입력할 수 있어요. 앱의 음성 인식이 지원되지 않으면 입력란을 누르고 휴대전화 키보드의 마이크를 이용해 말할 수 있어요.</p><label class="sr-only" for="transcript">주문 문장</label><textarea id="transcript" rows="4" placeholder="주문을 말하거나 여기에 직접 입력해 주세요."></textarea><p id="interim" class="interim" aria-live="polite"></p><button class="outline full" id="add" type="button">텍스트에서 후보 만들기</button><div id="unresolved" class="unresolved" hidden><strong>확인 필요</strong><ul id="unresolved-list"></ul><p>이미 취합된 주문은 그대로 남아요. 중복을 막으려면 원문 전체를 다시 취합하지 말고, 확인이 필요한 항목만 입력란에 따로 입력·수정해 취합해 주세요. 처리한 뒤 이 목록을 지워 주세요. 이 목록은 주문 복사에 포함되지 않습니다.</p><button id="clear-pending" class="quiet" type="button">확인 필요 항목 지우기</button></div></section>
@@ -74,6 +74,65 @@
   const countAfter = new RegExp('^\\s*((?:' + nums + ')(?:\\s*(?:' + nums + '))?|\\d+)\\s*(잔|개)', 'u');
   const countBefore = new RegExp('(' + nums + '|\\d+)\\s*(잔|개)\\s*$', 'u');
   const innocuous = /^(?:(?:저는|나는|저|제|저도|그리고|그다음|주세요|부탁해요|부탁합니다|주문|이요|요|랑|하고|와|과|는|은|을|를|이|가|도|좀|하나|한잔|요청|추가|각각)\s*)*$/;
+  // Fallback is deliberately atomic: any uncertain boundary rejects the whole utterance.
+  // Returned orders are review candidates; the app, not the parser, commits them.
+  function arbitraryMenus(value) {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    const fail = reason => ({orders:[], unresolved:[{text:value.trim(),reason}]});
+    // Do not reinterpret a failed control operation as a new drink.
+    if (/(?:취소|정정|변경|바꿔|바꾸|말고|아니(?:요|고|야|다)?|빼(?:고|줘|주세요|요)?|(?:^|\s)중(?:에|에서|\s)|씩(?:\s|$)|각각|나눠|나누|분배|반씩)/.test(value)) return null;
+    if (/(?:\d|[한두세네])\s*(?:~|〜|∼|–|—|-)\s*(?:\d|[한두세네])/.test(value)) return fail('수량 범위 확인 필요');
+    if (/\d+\.\d+\s*(?:잔|개)/.test(value)) return fail('소수 수량 확인 필요');
+    const parts=value.split(/[,，、;；!?！？\n]|(?<!\d)\.|\.(?!\d)|。/).map(x=>x.trim()).filter(Boolean);
+    if (!parts.length) return null;
+    const quantityRe=new RegExp('(?<![\\d.])((?:' + nums + ')(?:\\s*(?:' + nums + '))?|\\d+)\\s*(잔|개)', 'gu');
+    const results=[]; let allExplicit=true;
+    for (let part of parts) {
+      let person=null;
+      const pm=part.match(/^([가-힣]{2,4})(?:(?:님|씨)\s*(?:은|는|이|가|의|:)?|\s*:)\s*/);
+      if(pm){person=pm[1];part=part.slice(pm[0].length).trim();}
+      const matches=[...part.matchAll(quantityRe)];
+      if (!matches.length) {
+        allExplicit=false;
+        if (parts.length>1 || results.length) return fail('여러 메뉴의 수량 또는 경계 확인 필요');
+        matches.push(null);
+      }
+      let cursor=0;
+      for(const m of matches) {
+        let name=(m?part.slice(cursor,m.index):part.slice(cursor)).trim();
+        if (!m) name=name.replace(/\s+(?:주세요|부탁해요|부탁합니다)\s*$/, '').trim();
+        if (results.length) name=name.replace(/^(?:이요|요|주세요|부탁해요|부탁합니다)\s+/, '').trim();
+        name=name.replace(/^(?:(?:저는|나는|저도|그리고|그다음|주문)\s+)+/,'').trim();
+        // A final syllable, even when spaced, may be part of the menu. Preserve it.
+
+        const named=name.match(/^([가-힣]{2,4})(?:(?:님|씨)\s*(?:은|는|이|가|의|:)?|\s*:)\s*/);
+        if(named){person=named[1];name=name.slice(named[0].length).trim();}
+        if (!name || name.length>60 || /[,:;!?！？。]/.test(name)) return fail('메뉴 경계 확인 필요');
+        if (/(?:주세요|부탁|먹었|마셨|좋아|싫어|어제|오늘|내일|날씨|회의|사람|누구|뭐야|인가요|할까요|입니다|했어|했어요|같아|같아요|도요|라지|벤티|감사|고마워|안녕|이에요|예요|어요|아요|와요|워요|네요|군요|습니다|하자|해요|됐어|겠어|는데|까요|거야|거예요)/.test(name)) return fail('주문 여부 또는 메뉴 확인 필요');
+        if (/(?:\s|^)(?:한|두|세|네|다섯|여섯|일곱|여덟|아홉|열|\d+)\s*$/.test(name)) return fail('수량 단위 또는 메뉴 경계 확인 필요');
+        if (/(?:랑|하고|와|과)\s+/.test(name)) return fail('복수 메뉴 여부 확인 필요');
+        if (/\d+\s*(?:잔|개)/.test(name)) return fail('수량 확인 필요');
+        const n=m?number(m[1].replace(/\s+/g,'')):1;
+        if (!Number.isSafeInteger(n)||n<1||n>5) return fail('수량 확인 필요');
+        if (/^(?:아하|네|응|그래|알겠어|안녕)$/.test(name)) return fail('주문 여부 확인 필요');
+        if (/(?:아아|아라|뜨아|따아|뜨라)요(?:\s|$)/.test(name) || /(?:맛\s*음료)/.test(name)) return fail('메뉴 표현 확인 필요');
+        const known=[...name.matchAll(menuRe)];
+        if (known.length>1 && known.every(x=>/^(?:아아|아라|뜨아|따아|뜨라)$/.test(x[0]))) return fail('반복된 메뉴의 수량이 불분명함');
+        const exact=known.length===1 && known[0].index===0 && known[0][0].length===name.length;
+        const norm=exact?canonicalMenu(name):null;
+        // Explicitly contradictory temperature remains unresolved; no temperature is invented.
+        if (exact && !norm && /^(?:따뜻한|따뜻하게|뜨거운|핫)\s*콜드\s*브루$/.test(name)) return fail('메뉴 또는 온도 확인 필요');
+        const menu=norm || name;
+        results.push(person?{menu,quantity:n,person,personWarning:'음성 인식 오류 가능. 이름 확인 필요'}:{menu,quantity:n,person:null});
+        person=null; // A following order is not automatically the same person's.
+        cursor=m?m.index+m[0].length:part.length;
+      }
+      const tail=part.slice(cursor).trim();
+      if(tail && !/^(?:이요|요|을|를|은|는|이|가|도|주세요|부탁해요|부탁합니다|주문이요|추가요)(?:\s*(?:주세요|부탁해요|부탁합니다))?$/.test(tail)) return fail('마지막 메뉴 또는 수량 확인 필요');
+    }
+    if (!allExplicit && results.length>1) return fail('여러 메뉴의 수량 확인 필요');
+    return results.length?{orders:results,unresolved:[]}:null;
+  }
   function parseTranscript(input) {
     const orders = [], unresolved = [];
     if (!(typeof input === 'string' || Array.isArray(input))) return {orders, unresolved:[{text:String(input),reason:'입력은 문자열 또는 문자열 배열이어야 합니다'}]};
@@ -97,6 +156,7 @@
       }
       let cursor = 0, added = 0;
       for (let i=0;i<matches.length;i++) {
+        if (i>0) person=null; // Do not infer the person for a later order.
         const m=matches[i], start=m.index, end=start+m[0].length;
         let prefix=text.slice(cursor,start), before=prefix.match(countBefore), quantity=1;
         if (before) { quantity=number(before[1]); prefix=prefix.slice(0,before.index); }
@@ -142,6 +202,12 @@
     for (const value of texts) {
       if (typeof value !== 'string') { issue(String(value),'문자열이 아닌 발화'); continue; }
       const priorOrders=orders.map(o=>({...o})), priorIssues=unresolved.length;
+      // Multiple recognized menus cannot silently acquire missing counts.
+      if (!/(?:취소|아니|정정|말고|빼|바꿔|바꾸|변경|씩|각각)/.test(value)) {
+        const known=[...value.matchAll(menuRe)];
+        const explicit=[...value.matchAll(new RegExp('(?<![\\d.])(?:' + nums + ')(?:\\s*(?:' + nums + '))?\\s*(?:잔|개)|(?<![\\d.])\\d+\\s*(?:잔|개)', 'gu'))];
+        if (known.length>1 && explicit.length<known.length) { issue(value,'여러 메뉴의 수량 또는 경계 확인 필요'); continue; }
+      }
       const sentences=value.split(/[,.!?;\n]+/);
       if (sentences.some(part=>!safeControlSentence(part.trim()))) { issue(value,'정정·취소·분배 표현을 확실히 해석할 수 없음'); continue; }
       // A subtraction after a punctuation boundary can refer to a previous order.
@@ -198,6 +264,13 @@
         }
       }
       if (unresolved.length>priorIssues) { orders.splice(0,orders.length,...priorOrders); }
+    }
+    if (unresolved.length && (typeof input === 'string' || (Array.isArray(input) && typeof input[0] === 'string'))) {
+      const fallback=arbitraryMenus(Array.isArray(input)?input[0]:input);
+      if (fallback) {
+        if (Array.isArray(input) && input.length>1) fallback.unresolved.unshift({text:'추가 인식 후보 '+(input.length-1)+'개',reason:'대체 인식 후보는 합산하지 않음. 첫 번째 후보만 사용'});
+        return fallback;
+      }
     }
     return {orders, unresolved};
   }
