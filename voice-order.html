@@ -16,6 +16,8 @@
 .resume-option{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;margin-top:14px}.resume-option input{width:20px;height:20px;accent-color:var(--brown)}
 
 #candidate-section,#retry-panel{scroll-margin-top:16px}.retry-card .message{margin:6px 0 12px}.retry-card button{width:100%}
+
+.candidate-issue input{display:block;width:100%;font:inherit;font-size:16px;color:var(--ink);border:1px solid #e7ddd1;border-radius:10px;padding:10px;margin:8px 0}.candidate-issue button{margin:4px 4px 4px 0}
 </style>
   <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="커피모아 음성"><title>커피모아 음성 주문</title>
 </head>
@@ -27,15 +29,15 @@
     <h2 id="voice-title">주문을 들려주세요</h2>
     <p class="hint">예: “민지님 아이스 아메리카노 두 잔, 수현님 따뜻한 라떼 한 잔”</p>
     <button class="primary" id="listen" type="button"><span aria-hidden="true">●</span> 음성으로 주문 듣기</button>
-    <div class="voice-actions" id="voice-actions" hidden><button class="secondary" id="stop" type="button">말하기 끝내기</button><button class="quiet" id="recover" type="button">응답이 없나요? 연결 초기화</button></div>
-    <p class="note">처음에는 브라우저의 마이크 권한 승인이 필요해요. 한 번에 한 주문을 말해 주세요. 확인 후 이어 듣기를 선택하면 다시 듣기를 시도하지만 기기나 브라우저에서 실패할 수 있어요. 후보를 확인하기 전에는 합계에 추가되지 않아요.</p>
+    <div class="voice-actions" id="voice-actions" hidden><button class="secondary" id="stop" type="button">마이크 끄기</button><button class="quiet" id="recover" type="button">응답이 없나요? 연결 초기화</button></div>
+    <p class="note">마이크 권한이 필요해요. 한 번 듣기를 시작하면 한 주문씩 이어서 말할 수 있어요. 후보 확인 시 합계에 추가돼요. 후보를 확인하는 중에도 마이크가 켜져 있어요. 기기나 브라우저가 인식을 일찍 종료할 수 있으며, 종료되면 다시 말하기를 눌러 주세요.</p>
     <p id="message" class="message" role="status" aria-live="polite"></p>
   </section>
-  <section class="card" aria-labelledby="transcript-title"><div class="section-head"><div><div class="eyebrow">YOUR WORDS</div><h2 id="transcript-title">말한 내용 확인</h2></div><span class="step">01</span></div><p class="hint">인식된 내용을 수정하거나 직접 입력할 수 있어요. 앱의 음성 인식이 지원되지 않으면 입력란을 누르고 휴대전화 키보드의 마이크를 이용해 말할 수 있어요.</p><label class="sr-only" for="transcript">주문 문장</label><textarea id="transcript" rows="4" placeholder="주문을 말하거나 여기에 직접 입력해 주세요."></textarea><p id="interim" class="interim" aria-live="polite"></p><button class="outline full" id="add" type="button">텍스트에서 후보 만들기</button><div id="unresolved" class="unresolved" hidden><strong>확인 필요</strong><ul id="unresolved-list"></ul><p>이미 취합된 주문은 그대로 남아요. 중복을 막으려면 원문 전체를 다시 취합하지 말고, 확인이 필요한 항목만 입력란에 따로 입력·수정해 취합해 주세요. 처리한 뒤 이 목록을 지워 주세요.</p><button id="clear-pending" class="quiet" type="button">확인 필요 항목 지우기</button></div></section>
-  <section class="card" id="candidate-section" aria-labelledby="candidate-title" hidden><div class="section-head"><div><div class="eyebrow">REVIEW</div><h2 id="candidate-title" tabindex="-1">인식 후보 확인</h2></div></div><p class="hint">수량과 메뉴를 확인하세요. 여러 후보를 한 번에 추가합니다. 자동 수량 해석은 5잔까지이며, 더 많은 수량은 +로 직접 선택할 수 있어요. 확인이 필요한 내용은 합산되지 않습니다.</p><p id="candidate-save-warning" class="unresolved" role="alert" hidden></p><div id="candidates"></div><div id="candidate-issues" class="unresolved" hidden></div><label class="resume-option"><input type="checkbox" id="resume-listening" checked> 확인 후 다음 주문 이어 듣기 시도</label><p class="note">기기에 따라 재시작이 안 될 수 있어요. 원하지 않으면 선택을 해제하세요. 취소할 때는 다시 듣지 않습니다.</p><div class="result-actions"><button id="confirm-candidates" class="secondary" type="button">확인하고 합계에 추가</button><button id="cancel-candidates" class="quiet" type="button">후보 취소</button></div></section>
+  <section class="card" aria-labelledby="transcript-title"><div class="section-head"><div><div class="eyebrow">YOUR WORDS</div><h2 id="transcript-title">말한 내용 확인</h2></div><span class="step">01</span></div><p class="hint">인식된 내용을 수정하거나 직접 입력할 수 있어요. 앱의 음성 인식이 지원되지 않으면 입력란을 누르고 휴대전화 키보드의 마이크를 이용해 말할 수 있어요.</p><label class="sr-only" for="transcript">주문 문장</label><textarea id="transcript" rows="4" placeholder="주문을 말하거나 여기에 직접 입력해 주세요."></textarea><p id="interim" class="interim" aria-live="polite"></p><button class="outline full" id="add" type="button">텍스트에서 후보 만들기</button><div id="unresolved" class="unresolved" hidden><strong>확인 필요</strong><ul id="unresolved-list"></ul><p>이미 취합된 주문은 그대로 남아요. 중복을 막으려면 원문 전체를 다시 취합하지 말고, 확인이 필요한 항목만 입력란에 따로 입력·수정해 취합해 주세요. 처리한 뒤 이 목록을 지워 주세요. 이 목록은 주문 복사에 포함되지 않습니다.</p><button id="clear-pending" class="quiet" type="button">확인 필요 항목 지우기</button></div></section>
+  <section class="card" id="candidate-section" aria-labelledby="candidate-title" hidden><div class="section-head"><div><div class="eyebrow">REVIEW</div><h2 id="candidate-title" tabindex="-1">인식 후보 확인</h2></div></div><p class="hint">수량과 메뉴를 확인하세요. 여러 후보를 한 번에 추가합니다. 자동 수량 해석은 5잔까지이며, 더 많은 수량은 +로 직접 선택할 수 있어요. 확인이 필요한 내용은 합산되지 않으며 주문표에 복사하지 않습니다. 직접 입력한 내용은 확인해 보관할 수 있고, 자동 인식된 미확인 음성은 저장하지 않습니다. 미확인 음성과 후보는 새로고침하면 사라질 수 있어요.</p><p id="candidate-save-warning" class="unresolved" role="alert" hidden></p><p id="voice-queue-status" class="message" role="status" aria-live="polite"></p><div id="candidates"></div><div id="candidate-issues" class="unresolved" hidden></div><p class="note">듣는 중에도 후보를 확인하면 합계에 추가돼요. 인식 결과가 바뀌거나 겹치면 자동 합산하지 않고 확인을 요청해요.</p><div class="result-actions"><button id="candidate-stop" class="quiet" type="button" hidden>마이크 끄기</button><button id="confirm-candidates" class="secondary" type="button">확인하고 합계에 추가</button><button id="cancel-candidates" class="quiet" type="button">후보 취소</button></div></section>
   <section class="card retry-card" id="retry-panel" tabindex="-1" aria-labelledby="retry-title" hidden><h2 id="retry-title">다음 주문 음성 인식</h2><p id="retry-message" class="message" role="status" aria-live="polite"></p><button id="retry-listen" class="secondary" type="button" hidden>다시 말하기</button></section>
-  <section class="card" aria-labelledby="result-title"><div class="section-head"><div><div class="eyebrow">ORDER LIST</div><h2 id="result-title" tabindex="-1">모인 주문 <span id="total-count" class="count">0</span></h2></div><span class="step">02</span></div><div id="empty" class="empty"><span aria-hidden="true">☕</span><p>아직 모인 주문이 없어요.<br>첫 주문을 들려주세요!</p></div><div id="results"></div><div class="result-actions"><button id="undo" class="outline" type="button">최근 추가 되돌리기</button><button id="copy" class="outline" type="button">주문 복사</button><button id="clear" class="quiet danger" type="button">전체 초기화</button></div></section>
-  <footer><p>이 앱은 실시간 GPT 추론이 아닌 브라우저 음성 인식과 규칙 기반 주문 분석을 사용합니다. 앱은 녹음 파일을 저장하지 않습니다. 음성 데이터는 Apple 또는 Google 등 브라우저·기기의 음성 인식 제공자에게 전송될 수 있으며 사용 환경에 따라 다릅니다.</p><p>마이크 사용에는 보통 최상위 HTTPS 페이지와 권한이 필요합니다. 브라우저·네트워크에 따라 자동 종료와 인식이 보장되지 않아요. 지원하지 않으면 텍스트로 입력해 주세요.</p></footer>
+  <section class="card" aria-labelledby="result-title"><div class="section-head"><div><div class="eyebrow">ORDER LIST</div><h2 id="result-title" tabindex="-1">모인 주문 <span id="total-count" class="count">0</span></h2></div><span class="step">02</span></div><div id="empty" class="empty"><span aria-hidden="true">☕</span><p>아직 모인 주문이 없어요.<br>첫 주문을 들려주세요!</p></div><div id="results"></div><p id="copy-exclusion" class="note" role="status" hidden></p><div class="result-actions"><button id="undo" class="outline" type="button">최근 추가 되돌리기</button><button id="copy" class="outline" type="button">주문 복사</button><button id="clear" class="quiet danger" type="button">전체 초기화</button></div></section>
+  <footer><p>이 앱은 실시간 GPT 추론이 아닌 브라우저 음성 인식과 규칙 기반 주문 분석을 사용합니다. 앱은 녹음 파일을 저장하지 않습니다. 음성 데이터는 Apple 또는 Google 등 브라우저·기기의 음성 인식 제공자에게 전송될 수 있으며 사용 환경에 따라 다릅니다.</p><p>마이크 사용에는 보통 최상위 HTTPS 페이지와 권한이 필요합니다. iPhone 등 WebKit 브라우저는 연속 인식이 제한되거나 조기 종료될 수 있고, 음성 인식에 인터넷이 필요할 수 있어요. 브라우저·네트워크에 따라 자동 종료와 인식이 보장되지 않아요. 지원하지 않으면 텍스트로 입력해 주세요.</p></footer>
 </main>
 <script>(function (root, factory) {
   const api = factory();
@@ -205,7 +207,7 @@
   const KEY = 'coffee-moa-voice-new:v1';
   const $ = id => document.getElementById(id);
   const el = Object.fromEntries(['listen','stop','recover','voice-actions','status','message','transcript','interim','add','unresolved','unresolved-list','total-count','empty','results','undo','copy','clear','clear-pending','candidate-section','candidates','candidate-issues','confirm-candidates','cancel-candidates','resume-listening','candidate-title','result-title','retry-panel','retry-message','retry-listen','candidate-save-warning'].map(id => [id, $(id)]));
-  let orders = [], batches = [], pending = [], candidates = [], candidateIssues = [], session = null, sequence = 0, storageSafe = true, stagedText = null, retiring = null;
+  let orders = [], batches = [], pending = [], candidates = [], candidateIssues = [], session = null, sequence = 0, storageSafe = true, stagedText = null, retiring = null, voiceQueue = [], legacyQueue = undefined, storedExtras = {};
   const validOrder = o => o && typeof o.menu === 'string' && o.menu.trim() && typeof o.person === 'string' && Number.isSafeInteger(o.quantity) && o.quantity > 0 && o.quantity <= 9999 && typeof o.original === 'string' && typeof o.id === 'string';
   function message(text) { el.message.textContent = text; }
   function focusWithoutScroll(target) { try { target.focus({preventScroll:true}); } catch (_) {} }
@@ -216,17 +218,26 @@
   function warnUnsavedCandidates() { const text='후보가 화면 메모리에만 있어요. 새로고침하면 후보와 입력란 원문이 사라질 수 있으니 먼저 원문을 복사해 두고 저장 공간과 설정을 확인해 주세요. 같은 원문을 다시 후보로 만들면 중복될 수 있어요.'; el['candidate-save-warning'].textContent=text; el['candidate-save-warning'].hidden=false; message(text); }
   function save() {
     if (!storageSafe) { message('기존 저장 데이터를 읽지 못해 저장을 중지했어요. 데이터를 보호하기 위해 새로고침 전 복구해 주세요.'); return false; }
-    try { localStorage.setItem(KEY, JSON.stringify({orders, batches, pending, candidates, candidateIssues})); el['candidate-save-warning'].hidden=true; return true; }
+    try { localStorage.setItem(KEY, JSON.stringify({...storedExtras, orders, batches, pending, candidates:candidates.filter(c=>!c.volatile), candidateIssues:candidateIssues.filter(i=>!i.volatile), ...(legacyQueue===undefined?{}:{voiceQueue:legacyQueue})})); el['candidate-save-warning'].hidden=true; return true; }
     catch (_) { message('기기에 저장하지 못했어요. 저장 공간과 설정을 확인해 주세요. 새로고침하면 현재 주문이 사라질 수 있어요.'); return false; }
   }
   function load() {
     try {
       const data = JSON.parse(localStorage.getItem(KEY) || '{}');
+      if(!data || typeof data!=='object' || Array.isArray(data)) throw Error('invalid stored data');
+      const known=new Set(['orders','batches','pending','candidates','candidateIssues','voiceQueue']);
+      storedExtras=Object.fromEntries(Object.entries(data).filter(([key])=>!known.has(key)));
       if (Array.isArray(data.orders)) orders = data.orders.filter(validOrder);
       if (Array.isArray(data.batches)) batches = data.batches.filter(a => Array.isArray(a) && a.every(x => typeof x === 'string'));
       if (Array.isArray(data.candidates)) candidates = data.candidates.filter(o => o && typeof o.menu === 'string' && typeof o.person === 'string' && Number.isSafeInteger(o.quantity) && o.quantity > 0 && o.quantity <= 9999 && typeof o.original === 'string' && typeof o.id === 'string');
       if (Array.isArray(data.candidateIssues)) candidateIssues = data.candidateIssues.filter(x => x && typeof x.text === 'string' && typeof x.reason === 'string');
       if (Array.isArray(data.pending)) pending = data.pending.filter(x => x && typeof x.text === 'string' && typeof x.reason === 'string');
+      // A previous tab/session may have vanished before confirmation. Never silently commit it.
+      for (const c of candidates) delete c.approved;
+      if (Object.prototype.hasOwnProperty.call(data,'voiceQueue')) legacyQueue=data.voiceQueue;
+      if (Array.isArray(data.voiceQueue)) {
+        for (const q of legacyQueue) if (q && typeof q.text === 'string' && q.text.trim()) candidateIssues.push({text:q.text,original:q.text,reason:'이전 버전에 이미 저장된 음성입니다. 이 내용은 사용자가 삭제하기 전까지 기존 저장소에 남아 있습니다.',volatile:true,proposed:q.proposed || q.text,legacyRef:q});
+      }
     } catch (_) { storageSafe=false; message('저장된 주문을 불러오지 못했어요. 기존 데이터는 덮어쓰지 않았습니다.'); }
   }
   function node(tag, className, text) { const n = document.createElement(tag); if (className) n.className = className; if (text !== undefined) n.textContent = text; return n; }
@@ -234,7 +245,7 @@
     el.results.replaceChildren();
     el.empty.hidden = orders.length > 0;
     el['total-count'].textContent = String(orders.reduce((n,o) => n + o.quantity, 0));
-    el['unresolved-list'].replaceChildren(); el.unresolved.hidden = !pending.length;
+    el['unresolved-list'].replaceChildren(); el.unresolved.hidden = !pending.length; const copyNotice=$('copy-exclusion');if(copyNotice){copyNotice.hidden=!pending.length;copyNotice.textContent=pending.length?'확인 필요 '+pending.length+'건은 주문 복사에서 제외됩니다.':'';}
     for (const item of pending) el['unresolved-list'].append(node('li','',`${item.text || '(내용 없음)'}${item.reason ? `: ${item.reason}` : ''}${item.original && item.original !== item.text ? ` (원문: ${item.original})` : ''}`));
     const groups = new Map();
     for (const o of orders) { if (!groups.has(o.menu)) groups.set(o.menu, []); groups.get(o.menu).push(o); }
@@ -255,25 +266,25 @@
       el.results.append(group);
     }
     renderCandidates();
-    el.undo.disabled = !batches.length; el.copy.disabled = !orders.length && !pending.length; el.clear.disabled = !orders.length && !pending.length;
+    el.undo.disabled = !batches.length; el.copy.disabled = !orders.length; el.clear.disabled = !orders.length && !pending.length;
   }
   function change(id,delta) { const o=orders.find(x=>x.id===id); if (!o || o.quantity+delta<1 || o.quantity+delta>9999) return; o.quantity+=delta; save(); render(); }
   function removeOrder(id) { orders=orders.filter(o=>o.id!==id); save(); render(); }
-  function parseAndAdd(text) {
+  function parseAndAdd(text, voice=false, voiceKey=null, reviewWarning="", reviewMeta=null) {
     text = String(text || '').trim();
     if (!text) { message('먼저 주문 내용을 말하거나 입력해 주세요.'); return false; }
     if (!globalThis.CoffeeVoiceParser || typeof globalThis.CoffeeVoiceParser.parseTranscript !== 'function') { message('주문 분석기를 불러오지 못했어요. 원문은 남아 있어요.'); return false; }
     let result;
     try { result=globalThis.CoffeeVoiceParser.parseTranscript(text); } catch (_) { message('분석하지 못했어요. 원문을 확인해 주세요.'); return false; }
     if (!result || !Array.isArray(result.orders) || !Array.isArray(result.unresolved)) { message('분석 결과가 올바르지 않아 추가하지 않았어요.'); return false; }
-    const issues=result.unresolved.map(u=>({text:typeof u?.text==='string'?u.text:text,reason:typeof u?.reason==='string'?u.reason:'확인이 필요합니다',original:text}));
+    const issues=result.unresolved.map(u=>({text:typeof u?.text==='string'?u.text:text,reason:typeof u?.reason==='string'?u.reason:'확인이 필요합니다',original:text,volatile:true,manual:!voice,voiceKey}));
     const made=[];
     for (const item of result.orders) {
-      if (!item || typeof item.menu!=='string' || !item.menu.trim() || !Number.isSafeInteger(item.quantity) || item.quantity<1 || item.quantity>9999 || (item.person!=null && typeof item.person!=='string') || (item.personWarning!=null && typeof item.personWarning!=='string')) { issues.push({text,reason:'주문 정보를 확실하게 확인할 수 없습니다'}); continue; }
+      if (!item || typeof item.menu!=='string' || !item.menu.trim() || !Number.isSafeInteger(item.quantity) || item.quantity<1 || item.quantity>9999 || (item.person!=null && typeof item.person!=='string') || (item.personWarning!=null && typeof item.personWarning!=='string')) { issues.push({text,reason:'주문 정보를 확실하게 확인할 수 없습니다',original:text,volatile:true,manual:!voice,voiceKey}); continue; }
       const id=Date.now().toString(36)+'-'+(++sequence).toString(36)+'-'+Math.random().toString(36).slice(2,10);
-      made.push({id,menu:item.menu.trim(),quantity:item.quantity,person:item.person?.trim()||'',personWarning:item.personWarning||'',original:text});
+      made.push({id,menu:item.menu.trim(),quantity:item.quantity,person:item.person?.trim()||'',personWarning:item.personWarning||'',original:text,...(voice?{volatile:true,voiceKey,reviewWarning,...(reviewMeta||{})}:{})});
     }
-    if (!made.length && !issues.length) issues.push({text,reason:'취소되었거나 추가할 주문이 없습니다',original:text});
+    if (!made.length && !issues.length) issues.push({text,reason:'취소되었거나 추가할 주문이 없습니다',original:text,volatile:true,manual:!voice,voiceKey});
     candidates.push(...made); candidateIssues.push(...issues); render();
     const saved=save();
     if (saved) message(made.length ? '후보 '+made.length+'건을 만들었어요. 확인을 눌러야 합계에 추가됩니다.' : '추가할 후보가 없어요. 아래 확인 필요 내용을 살펴봐 주세요.');
@@ -281,113 +292,170 @@
     return saved;
   }
   function renderCandidates() {
-    el['candidate-section'].hidden=!candidates.length&&!candidateIssues.length;
+    el['candidate-section'].hidden=!candidates.some(c=>!c.approved)&&!candidateIssues.length;
     el.candidates.replaceChildren();
-    for (const c of candidates) {
+    for (const c of candidates.filter(c=>!c.approved)) {
       const card=node('div','candidate');
       const label=node('label','', '메뉴 수정'); const input=node('input'); input.type='text'; input.value=c.menu; input.maxLength=100; input.setAttribute('aria-label','메뉴 수정');
-      input.addEventListener('input',()=>{c.menu=input.value; save();}); label.append(input); card.append(label);
+      input.addEventListener('input',()=>{c.menu=input.value;if(c.extractionNote)c.duplicateRisk=true;save();}); label.append(input); card.append(label);
       card.append(node('div','person',c.person || '이름 미지정'));
       if(c.personWarning) card.append(node('div','person-warning',c.personWarning));
+      if(c.reviewWarning) card.append(node('div','person-warning',c.reviewWarning));
+      if(c.sourceFull) card.append(node('div','original','인식 전체 원문: '+c.sourceFull+'\n'+(c.extractionNote||'')));
       card.append(node('div','original','원문: '+c.original));
       const controls=node('div','controls'); const minus=node('button','','−'); minus.type='button'; minus.setAttribute('aria-label',c.menu+' 후보 수량 줄이기'); minus.disabled=c.quantity<=1;
       const plus=node('button','','+'); plus.type='button'; plus.setAttribute('aria-label',c.menu+' 후보 수량 늘리기'); plus.disabled=c.quantity>=9999;
-      minus.addEventListener('click',()=>{if(c.quantity>1){c.quantity--;save();render();}}); plus.addEventListener('click',()=>{if(c.quantity<9999){c.quantity++;save();render();}});
+      minus.addEventListener('click',()=>{if(c.quantity>1){c.quantity--;if(c.extractionNote)c.duplicateRisk=true;save();render();}}); plus.addEventListener('click',()=>{if(c.quantity<9999){c.quantity++;if(c.extractionNote)c.duplicateRisk=true;save();render();}});
       const remove=node('button','remove','후보 삭제'); remove.type='button'; remove.addEventListener('click',()=>{candidates=candidates.filter(x=>x.id!==c.id);save();render();});
       controls.append(minus,node('span','qty',String(c.quantity)),plus,remove); card.append(controls); el.candidates.append(card);
     }
     el['candidate-issues'].replaceChildren(); el['candidate-issues'].hidden=!candidateIssues.length;
-    if(candidateIssues.length) {el['candidate-issues'].append(node('strong','','합산하지 않는 확인 필요 내용')); for(const issue of candidateIssues) el['candidate-issues'].append(node('div','candidate-issue',issue.text+': '+issue.reason+(issue.original && issue.original!==issue.text ? '\n원문: '+issue.original : '')));}
-    el['confirm-candidates'].disabled=!!session || (!candidates.length && !candidateIssues.length); el['confirm-candidates'].textContent=candidates.length ? '확인하고 합계에 추가' : '확인 필요 내용 보관';
+    if(candidateIssues.length) {
+      el['candidate-issues'].append(node('strong','','합산하지 않는 확인 필요 내용'));
+      for(const issue of candidateIssues){
+        const row=node('div','candidate-issue'); row.append(node('div','',issue.text+': '+issue.reason+(issue.original && issue.original!==issue.text ? '\n원문: '+issue.original : '')));
+        if(issue.volatile){
+          row.append(node('div','original',issue.legacyRef?'이전 버전 저장 데이터입니다. 이 내용 삭제 버튼을 눌러야 저장소에서도 삭제됩니다. 주문표에 복사되지 않습니다.':issue.manual?'직접 입력한 내용입니다. 확인 필요 내용 보관을 눌러야 저장되며, 주문 복사에는 포함되지 않습니다.':'이 내용은 화면 메모리에만 있으며 새로고침하면 사라집니다. 주문표에 복사되지 않습니다.'));
+          const edit=node('input');edit.type='text';edit.value=issue.proposed || issue.original || issue.text;edit.setAttribute('aria-label','확인할 문장 수정');edit.addEventListener('input',()=>{issue.proposed=edit.value;});row.append(edit);const make=node('button','outline','이 문장으로 새 후보 만들기');make.type='button';make.addEventListener('click',()=>{const text=edit.value.trim();if(!text){message('먼저 확인할 문장을 입력해 주세요.');return;}issue.proposed=text;candidateIssues=candidateIssues.filter(x=>x!==issue);const before=candidates.length+candidateIssues.length;parseAndAdd(text,!issue.manual,issue.voiceKey,issue.extracted?'이전 확정 주문을 제외한 나머지를 제안했어요. 전체 원문과 합계를 직접 비교하세요.':'중복 주문일 수 있어요. 기존 합계와 비교하고 새 주문이 맞는지 다시 확인하세요.',{sourceFull:issue.fullText||'',extractionNote:issue.extractionNote||'',sourcePreviousEntry:issue.previousEntry||null,sourceEntry:issue.sourceEntry||null,duplicateRisk:!!issue.duplicateRisk || (!!issue.extracted && text!==issue.suggested)});if(candidates.length+candidateIssues.length===before){candidateIssues.push(issue);render();message('분석하지 못했어요. 수정한 원문은 그대로 남아 있어요.');}});row.append(make);
+          const del=node('button','quiet','이 내용 삭제');del.type='button';del.addEventListener('click',()=>{if(issue.legacyRef){const old=legacyQueue;legacyQueue=legacyQueue.filter(q=>q!==issue.legacyRef);if(!save()){legacyQueue=old;message('저장하지 못해 이전 음성을 삭제하지 않았어요.');return;}}candidateIssues=candidateIssues.filter(x=>x!==issue);const part=session?.parts.get(issue.voiceKey);if(part){part.text='';part.history=[];part.deleted=true;}render();flushQueue(session);});row.append(del);
+        }
+        el['candidate-issues'].append(row);
+      }
+    }
+    el['confirm-candidates'].disabled=!candidates.some(c=>!c.approved) && !candidateIssues.some(i=>!i.volatile||i.manual); el['confirm-candidates'].textContent=candidates.some(c=>!c.approved) ? (candidateIssues.some(i=>i.manual)?'후보 추가 및 직접 입력 내용 보관':'확인하고 합계에 추가') : '확인 필요 내용 보관';
   }
-  function confirmCandidates(userGesture = false) {
-    if(session) { message('듣기가 끝난 뒤 후보를 확인해 주세요.'); return; }
-    if(!candidates.length && !candidateIssues.length) return;
-    if(candidates.some(c=>!c.menu.trim() || !Number.isSafeInteger(c.quantity) || c.quantity<1 || c.quantity>9999)) {message('모든 후보의 메뉴와 수량을 확인해 주세요.');return;}
+  function confirmCandidates() {
+    const visible=candidates.filter(c=>!c.approved);
+    if(!visible.length && !candidateIssues.some(i=>!i.volatile||i.manual)) return;
+    if(visible.some(c=>!c.menu.trim() || !Number.isSafeInteger(c.quantity) || c.quantity<1 || c.quantity>9999)) {message('모든 후보의 메뉴와 수량을 확인해 주세요.');return;}
+    for(const c of visible)if(c.extractionNote && !partStillConfirmed(c.sourcePreviousEntry))c.duplicateRisk=true;
+    if(visible.some(c=>c.duplicateRisk) && !confirm('기존 주문과 같은 내용이 다시 추가될 수 있습니다. 원문과 합계를 확인했고 별도 주문이 맞나요?')) return;
     const prior={orders,batches,pending,candidates,candidateIssues};
-    const added=candidates.map(c=>({...c,menu:c.menu.trim()}));
+    const added=visible.map(c=>{const x={...c,menu:c.menu.trim()};delete x.approved;delete x.voiceKey;delete x.volatile;delete x.reviewWarning;delete x.sourceFull;delete x.extractionNote;delete x.sourcePreviousEntry;delete x.sourceEntry;delete x.duplicateRisk;return x;});
     orders=[...orders,...added]; batches=added.length ? [...batches,added.map(c=>c.id)].slice(-100) : batches;
-    pending=[...pending,...candidateIssues]; candidates=[]; candidateIssues=[];
-    if(!save()) { ({orders,batches,pending,candidates,candidateIssues}=prior); render(); message('저장하지 못해 합계에 추가하지 않았어요. 후보와 확인 필요 내용은 화면에 남아 있지만 새로고침하면 사라질 수 있어요. 저장 공간과 설정을 확인하고 다시 시도해 주세요.'); return; }
-    const resume=userGesture && el['resume-listening'].checked;
-    if(resume) { showRetry('다음 주문 듣기를 연결하고 있어요. 잠시만 기다려 주세요.'); focusWithoutScroll(el['retry-panel']); } else focusWithoutScroll(el['result-title']);
-    render(); message(added.length ? added.length+'건을 합계에 추가했어요.' : '확인 필요 내용을 보관했어요. 합계에는 추가하지 않았어요.');
-    if(resume) { start(); if(!el['retry-panel'].hidden) showInView(el['retry-panel']); }
+    pending=[...pending,...candidateIssues.filter(i=>!i.volatile||i.manual).map(i=>{const x={...i};delete x.volatile;delete x.manual;delete x.voiceKey;delete x.proposed;return x;})]; candidates=candidates.filter(c=>c.approved); candidateIssues=candidateIssues.filter(i=>i.volatile&&!i.manual);
+    if(!save()) {({orders,batches,pending,candidates,candidateIssues}=prior);render();message('저장하지 못해 합계에 추가하지 않았어요. 후보는 남아 있어요.');return;}
+    for(const c of visible){const part=(session && session.parts.get(c.voiceKey)) || c.sourceEntry;if(part){part.confirmed=true;(part.confirmedOrders ||= []).push({id:c.id,menu:c.menu.trim(),quantity:c.quantity,person:c.person});}} 
+    render();message(added.length ? added.length+'건을 합계에 추가했어요.' : '확인 필요 내용을 보관했어요.');
+    flushQueue(session);
   }
   function cancelCandidates() {
-    if(!candidates.length&&!candidateIssues.length)return;
+    if(!candidates.some(c=>!c.approved)&&!candidateIssues.length)return;
     if(candidateIssues.length && !confirm('확인 필요 원문도 함께 삭제됩니다. 정말 후보를 취소할까요?')) return;
-    const oldCandidates=candidates, oldIssues=candidateIssues; candidates=[]; candidateIssues=[];
+    const oldCandidates=candidates, oldIssues=candidateIssues; candidates=candidates.filter(c=>c.approved); candidateIssues=[];
     if(!save()){candidates=oldCandidates;candidateIssues=oldIssues;render();message('저장하지 못해 후보 취소를 완료하지 않았어요. 후보와 원문은 그대로 남아 있어요.');return;}
-    render();message('후보를 취소했어요. 기존 합계는 그대로예요.');
+    render();message('후보를 취소했어요. 기존 합계는 그대로예요.'); flushQueue(session);
   }
   function undo() { if ((candidates.length || candidateIssues.length) && !confirm('확인 전 후보는 그대로 남고, 기존 합계의 최근 추가만 되돌립니다. 계속할까요?')) return; const batch=batches.pop(); if (!batch) return; const ids=new Set(batch); orders=orders.filter(o=>!ids.has(o.id)); if (save()) message('최근 추가한 주문을 되돌렸어요.'); render(); }
-  function formatOrders() { const groups=new Map(); for (const o of orders) { if(!groups.has(o.menu)) groups.set(o.menu,[]); groups.get(o.menu).push(o); } const text=[...groups].map(([menu,list]) => `${menu} ${list.reduce((n,o)=>n+o.quantity,0)}잔\n${list.map(o=>`  ${o.person || '이름 미지정'} ${o.quantity}잔${typeof o.personWarning === 'string' && o.personWarning.trim() ? `\n    ${o.personWarning}` : ''}`).join('\n')}`).join('\n\n'); return [text,pending.length ? `확인 필요\n${pending.map(p=>`- ${p.text}: ${p.reason}${p.original && p.original!==p.text ? ` (원문: ${p.original})` : ''}`).join('\n')}` : ''].filter(Boolean).join('\n\n'); }
-  async function copy() { if ((candidates.length || candidateIssues.length) && !confirm('확인하지 않은 후보는 복사할 합계에 포함되지 않아요. 그래도 복사할까요?')) return; try { if (!navigator.clipboard || !navigator.clipboard.writeText) throw Error(); await navigator.clipboard.writeText(formatOrders()); message('주문을 복사했어요.'); } catch (_) { message('자동 복사가 안 돼요. 아래 주문 내용을 길게 눌러 직접 복사해 주세요.'); } }
-  function ui(active, started=false) { el.listen.disabled=active; el['confirm-candidates'].disabled=active || (!candidates.length && !candidateIssues.length); el['voice-actions'].hidden=!active; el.transcript.readOnly=active; el.add.disabled=active; el.status.textContent=active?(started?'듣고 있어요':'연결 중이에요'):'준비됐어요'; }
-  function combined(s) { const values=s.parts.filter(p=>p && p.text.trim()).map(p=>p.text.trim()); if(!values.length)return ''; const last=values[values.length-1]; return values.slice(0,-1).every(v=>last.startsWith(v)) ? last : values.join(' / '); }
-  function updateText(s) { const text=combined(s); el.transcript.value=[s.base,text].filter(Boolean).join('\n'); el.interim.textContent=text ? `인식 중: ${text}` : ''; }
-  function clearWatchdog(s) { if (s.timer !== null) { clearTimeout(s.timer); s.timer = null; } }
-  function release(s) { if (session!==s) return false; clearWatchdog(s); session=null; ui(false); el.interim.textContent=''; return true; }
-  // abort 요청은 실제 마이크 종료와 다를 수 있어 잠시 종료 이벤트를 기다린다.
-  // 종료 이벤트가 누락돼도 2초 후 사용자가 직접 다시 시도할 수 있다.
-  function retire(s) {
-    retiring=s;
-    s.retireTimer=setTimeout(()=>{ if(retiring!==s) return; retiring=null; if(s.waitingRetry) showRetry('이전 연결 종료 확인이 지연되고 있어요. 다시 말하기를 눌러 재시도해 주세요. 계속 실패하면 잠시 후 다시 시도해 주세요.',true); },2000);
-    try { s.recognition.abort(); } catch (_) {}
+  function formatOrders() { const groups=new Map(); for (const o of orders) { if(!groups.has(o.menu)) groups.set(o.menu,[]); groups.get(o.menu).push(o); } const text=[...groups].map(([menu,list]) => `${menu} ${list.reduce((n,o)=>n+o.quantity,0)}잔\n${list.map(o=>`  ${o.person || '이름 미지정'} ${o.quantity}잔${typeof o.personWarning === 'string' && o.personWarning.trim() ? `\n    ${o.personWarning}` : ''}`).join('\n')}`).join('\n\n'); return text; }
+  async function copy() { if ((candidates.length || candidateIssues.length) && !confirm('확인하지 않은 후보는 복사할 합계에 포함되지 않아요. 그래도 복사할까요?')) return; try { if (!navigator.clipboard || !navigator.clipboard.writeText) throw Error(); await navigator.clipboard.writeText(formatOrders()); message('주문을 복사했어요.'+(pending.length?' 확인 필요 '+pending.length+'건은 복사에서 제외됐어요.':'')); } catch (_) { message('자동 복사가 안 돼요. 아래 주문 내용을 길게 눌러 직접 복사해 주세요.'); } }
+  function ui(active, started=false) { el.listen.disabled=active; el['confirm-candidates'].disabled=!candidates.some(c=>!c.approved) && !candidateIssues.some(i=>!i.volatile||i.manual); el['voice-actions'].hidden=!active; const candidateStop=$('candidate-stop');if(candidateStop)candidateStop.hidden=!active; el.transcript.readOnly=active; el.add.disabled=active; el.status.textContent=active?(started?'마이크 연결됨':'연결 중이에요'):'준비됐어요'; }
+  // Only a terminal end commits provisional approvals. A changed result index is never silently reinterpreted.
+  function updateQueueStatus(){const target=$('voice-queue-status');if(target)target.textContent=voiceQueue.length?'다음 음성 '+voiceQueue.length+'건이 대기 중이에요. 현재 후보를 확인하거나 취소하면 순서대로 표시합니다.':'';}
+  function prefixRemainder(previous, full) {
+    if(!previous || !full || !full.startsWith(previous) || full.length<=previous.length)return '';
+    const tail=full.slice(previous.length);
+    if(!/^[\s,.;:!?、，。]/.test(tail))return '';
+    return tail.replace(/^[\s,.;:!?、，。]+/,'').trim();
   }
-  function finishRetiring(s) { if(retiring!==s) return; clearTimeout(s.retireTimer); retiring=null; if(s.waitingRetry) showRetry('이전 음성 연결이 정리됐어요. 다시 말하기를 눌러 주세요.',true); }
-  function armWatchdog(s, delay) {
-    if (session!==s || s.ended || !s.started) return;
-    clearWatchdog(s);
-    s.timer=setTimeout(()=>{
-      if (session!==s || s.ended) return;
-      s.ended=true; updateText(s); release(s);
-      retire(s);
-      failListening('음성 인식의 응답이 지연되어 연결을 초기화했어요. 전사 내용은 남겨 두었고 자동 취합하지 않았어요. 다시 말하기를 누르거나 내용을 확인해 직접 취합해 주세요.');
-    }, delay);
+  function partStillConfirmed(part) {
+    return !!(part?.confirmed && part.confirmedOrders?.length && part.confirmedOrders.every(old=>orders.some(o=>o.id===old.id && o.menu===old.menu && o.quantity===old.quantity && o.person===old.person)));
+  }
+  function queueIssue(s, key, oldText, newText) {
+    candidates=candidates.filter(c=>c.voiceKey!==key);
+    candidateIssues=candidateIssues.filter(c=>c.voiceKey!==key);
+    voiceQueue=voiceQueue.filter(q=>q.key!==key);
+    const entry=s.parts.get(key); const history=entry?.history || [oldText]; if(newText && !history.includes(newText))history.push(newText); const original=history.filter(Boolean).join(' / ');
+    voiceQueue.push({key,text:original,issue:true,confirmed:!!entry?.confirmed,proposed:newText && !newText.startsWith('(결과') ? newText : '',fullText:newText,previousText:oldText,previousEntry:entry,sourceEntry:entry});
+    if(entry){entry.conflict=true;entry.history=history;}
+  }
+  function flushQueue(s) {
+    if((s && session!==s) || candidates.some(c=>!c.approved) || candidateIssues.length || !voiceQueue.length) return;
+    const q=voiceQueue.shift(); updateQueueStatus();
+    if(q.issue) {
+      const confirmed=partStillConfirmed(q.previousEntry);
+      const suffix=confirmed ? prefixRemainder(q.previousText,q.fullText) : '';
+      const extractionNote=suffix?'이미 합산된 정확한 접두어 "'+q.previousText+'"를 제외하고 나머지 "'+suffix+'"만 제안합니다. 인식이 누적됐는지는 확실하지 않으니 원문과 합계를 비교하세요.':'';
+      const reason=suffix ? extractionNote : (confirmed?'이미 확인한 음성과 ':'')+'중복 또는 새로운 주문인지 구분할 수 없어요. 기존 합계는 변경하지 않았으며 추가하려면 별도 재확인이 필요합니다.';
+      candidateIssues.push({text:q.text,original:q.text,reason,voiceKey:q.key,volatile:true,proposed:suffix||q.proposed||'',suggested:suffix||'',fullText:q.fullText||'',previousEntry:q.previousEntry||null,sourceEntry:q.sourceEntry||null,extracted:!!suffix,extractionNote,duplicateRisk:!suffix});
+      render(); if(!save()) warnUnsavedCandidates(); reviewCandidates(); return;
+    }
+    const before=candidates.length, issuesBefore=candidateIssues.length;
+    parseAndAdd(q.text,true,q.key);
+    for(const c of candidates.slice(before)){c.voiceKey=q.key;c.sourceEntry=q.sourceEntry||null;}
+    for(const issue of candidateIssues.slice(issuesBefore)) issue.voiceKey=q.key;
+    if(!save()) {if(!el.transcript.value.includes(q.text))el.transcript.value=[el.transcript.value.trim(),q.text].filter(Boolean).join(' / ');stagedText=el.transcript.value.trim();warnUnsavedCandidates();}
+    if(candidates.length>before || candidateIssues.length>issuesBefore) reviewCandidates();
+    else {candidateIssues.push({text:q.text,original:q.text,reason:'자동 분석하지 못했어요. 직접 확인해 주세요.',volatile:true});render();save();reviewCandidates();}
+  }
+  function clearWatchdog(s) { if(s.timer!==null){clearTimeout(s.timer);s.timer=null;} }
+  function release(s) {if(session!==s)return false;clearWatchdog(s);session=null;ui(false); if(s.interim){el.transcript.value=[el.transcript.value.trim(),s.interim].filter(Boolean).join('\n');}el.interim.textContent='';return true;}
+  function retire(s) {retiring=s;s.retireTimer=setTimeout(()=>{if(retiring!==s)return;retiring=null;if(s.waitingRetry)showRetry('이전 연결 종료 확인이 지연돼요. 다시 말하기를 누르거나 직접 입력해 주세요.',true);},2000);try{s.recognition.abort();}catch(_){}}
+  function finishRetiring(s){if(retiring!==s)return;clearTimeout(s.retireTimer);retiring=null;if(s.waitingRetry)showRetry('이전 연결이 정리됐어요. 다시 말하기를 눌러 주세요.',true);}
+  function demote(s) {for(const c of candidates) if(c.approved) delete c.approved; updateQueueStatus(); if(!save())warnUnsavedCandidates();render();flushQueue(null);}
+  function failSession(s,text){if(session!==s||s.ended)return;s.ended=true;release(s);demote(s); const originals=[...new Set(candidates.filter(c=>!c.approved && c.voiceKey && c.original).map(c=>c.original))]; if(originals.length){for(const raw of originals)if(!el.transcript.value.includes(raw))el.transcript.value=[el.transcript.value.trim(),raw].filter(Boolean).join(' / ');stagedText=el.transcript.value.trim();} retire(s);failListening(text+' 기존 합계는 유지됩니다. 원문과 후보를 확인해 주세요.');}
+  function armWatchdog(s){if(session!==s||s.ended||!s.started)return;clearWatchdog(s);s.timer=setTimeout(()=>failSession(s,'25초 동안 음성 인식 응답이 없어 연결을 종료했어요.'),25000);}
+  function commitApproved(s) {
+    const approved=candidates.filter(c=>c.approved), old={orders,batches,candidates};
+    const added=approved.map(c=>{const x={...c,menu:c.menu.trim()};delete x.approved;delete x.voiceKey;return x;});
+    orders=[...orders,...added]; if(added.length)batches=[...batches,added.map(c=>c.id)].slice(-100);
+    candidates=candidates.filter(c=>!c.approved);
+    if(!save()){({orders,batches,candidates}=old);for(const c of candidates)delete c.approved;save();warnUnsavedCandidates();return false;}
+    return true;
   }
   function start() {
-    if (session) return;
-    if (retiring) { retiring.waitingRetry=true; failListening('이전 음성 연결을 정리하고 있어요. 잠시 후 다시 말하기를 눌러 주세요.'); return; }
+    if(session)return;
+    if(retiring){retiring.waitingRetry=true;failListening('이전 음성 연결을 정리하고 있어요. 잠시 후 다시 말하기를 눌러 주세요.');return;}
     const Constructor=globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition;
-    if (!Constructor) { failListening('이 브라우저는 앱의 음성 인식을 지원하지 않아요. 입력란의 휴대전화 키보드 마이크나 직접 입력을 이용해 주세요.'); return; }
-    if (!globalThis.isSecureContext || globalThis.top !== globalThis.self) { failListening('마이크 사용을 위해 최상위 HTTPS 페이지에서 열어 주세요. 직접 입력도 가능합니다.'); return; }
-    let recognition;
-    try { recognition=new Constructor(); } catch (_) { failListening('음성 인식을 준비하지 못했어요. 다시 말하기를 누르거나 직접 입력해 주세요.'); return; }
-    const s={recognition,parts:[],base:el.transcript.value.trim(),ended:false,started:false,speaking:false,timer:null}; session=s; ui(true); message('음성 인식을 연결하고 있어요. 마이크 권한 요청이 나타나면 허용해 주세요.'); showRetry('연결 중이에요. 마이크 권한 요청이 나타나면 허용해 주세요.');
-    recognition.lang='ko-KR'; recognition.interimResults=true; recognition.continuous=false;
-    const started=()=>{ if(session!==s || s.ended || s.started) return; s.started=true; ui(true,true); message('듣고 있어요. 편하게 말씀해 주세요. 필요하면 말하기 끝내기를 눌러 주세요.'); showRetry('듣고 있어요. 다음 주문을 말씀해 주세요.'); armWatchdog(s,25000); };
-    recognition.onstart=started; recognition.onaudiostart=started;
-    recognition.onspeechstart=()=>{ if(session!==s || s.ended) return; s.speaking=true; armWatchdog(s,25000); };
-    recognition.onspeechend=()=>{ if(session!==s || s.ended) return; s.speaking=false; armWatchdog(s,25000); };
-    recognition.onresult=e=>{ if(session!==s || s.ended) return; for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i]; s.parts[i]={text:String(r[0]?.transcript || ''),final:!!r.isFinal};} s.parts.length=e.results.length; updateText(s); armWatchdog(s,25000); };
-    recognition.onerror=e=>{ if(session!==s || s.ended) return; s.ended=true; updateText(s); release(s); retire(s); const reasons={'not-allowed':'마이크 권한이 거부되었어요. 브라우저와 기기 권한을 확인해 주세요.','service-not-allowed':'음성 인식 서비스 사용이 허용되지 않았어요.','audio-capture':'마이크를 찾거나 사용할 수 없어요.','network':'음성 인식 네트워크 연결에 문제가 있어요.','no-speech':'말소리를 듣지 못했어요.','aborted':'음성 인식이 중단되었어요.'}; failListening(`${reasons[e.error] || '음성 인식 중 문제가 발생했어요.'} 전사 내용은 남겨 두었고 자동 취합하지 않았어요. 다시 말하기를 누르거나 직접 수정해 취합할 수 있어요.`); };
-    recognition.onend=()=>{
-      finishRetiring(s);
-      if(session!==s || s.ended) return;
-      s.ended=true; updateText(s); release(s);
-      const last=[...s.parts].reverse().find(p=>p && p.text.trim());
-      if(!last) {failListening('확정된 말이 없어요. 다시 말하기를 누르거나 직접 입력해 주세요.');return;}
-      if(!last.final) {failListening('확정되지 않은 인식 내용은 후보에 추가하지 않았어요. 원문을 수정해 후보를 만들거나 다시 말하기를 눌러 주세요.');return;}
-      const earlier=s.parts.filter(p=>p && p.final && p!==last && p.text.trim());
-      if(earlier.some(p=>!last.text.trim().startsWith(p.text.trim()))) {
-        const original=combined(s); candidateIssues.push({text:original,original,reason:'최종 인식 결과가 서로 달라 확인이 필요합니다'}); render();
-        if(save()) message('서로 다른 최종 인식 결과를 합산하지 않았어요. 원문을 확인해 주세요.'); else { warnUnsavedCandidates(); stagedText=el.transcript.value.trim(); } reviewCandidates(); return;
+    if(!Constructor){failListening('이 브라우저는 앱의 음성 인식을 지원하지 않아요. 키보드 마이크나 직접 입력을 이용해 주세요.');return;}
+    if(!globalThis.isSecureContext || globalThis.top!==globalThis.self){failListening('마이크 사용을 위해 최상위 HTTPS 페이지에서 열어 주세요.');return;}
+    let recognition;try{recognition=new Constructor();}catch(_){failListening('음성 인식을 준비하지 못했어요. 다시 말하기를 누르거나 직접 입력해 주세요.');return;}
+    const s={recognition,parts:new Map(),ended:false,started:false,stopping:false,timer:null,id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)};
+    session=s;ui(true);message('음성 인식을 연결하고 있어요. 마이크 권한 요청이 나타나면 허용해 주세요.');showRetry('연결 중이에요.');
+    recognition.lang='ko-KR';recognition.interimResults=true;recognition.continuous=true;
+    recognition.onstart=()=>{if(session!==s||s.ended||s.started)return;s.started=true;ui(true,true);message('마이크 연결됨. 한 주문씩 말씀해 주세요. 소리 감지나 인식 결과가 없으면 다시 말하기를 이용해 주세요.');showRetry('마이크가 연결됐어요. 후보를 확인하는 중에도 켜져 있습니다.');armWatchdog(s);};
+    recognition.onsoundstart=()=>{if(session!==s||s.ended)return;el.status.textContent='소리 감지됨';armWatchdog(s);}; recognition.onspeechstart=()=>{if(session!==s||s.ended)return;el.status.textContent='말소리 인식 중';armWatchdog(s);};recognition.onspeechend=()=>{if(session!==s||s.ended)return;el.status.textContent='마이크 연결됨';armWatchdog(s);};
+    recognition.onresult=e=>{
+      if(session!==s||s.ended)return;
+      if(!s.started)recognition.onstart();
+      el.status.textContent='인식 결과 수신됨';
+      let interim=[];
+      // Inspect the entire result list: some implementations report an inaccurate resultIndex.
+      for(let i=0;i<e.results.length;i++){
+        const r=e.results[i], text=String(r?.[0]?.transcript||'').trim(), key=s.id+':'+i, prior=s.parts.get(key);
+        if(prior?.deleted)continue;
+        if(!r?.isFinal){if(text)interim.push(text);if(prior){queueIssue(s,key,prior.text,text);prior.text=text;prior.conflict=true;}continue;}
+        if(!text){if(prior&&!prior.conflict)queueIssue(s,key,prior.text,'(결과 내용 삭제됨)');continue;}
+        if(prior){if(prior.text!==text){queueIssue(s,key,prior.text,text);prior.text=text;prior.conflict=true;}continue;}
+        const entry={text,conflict:false};s.parts.set(key,entry);
+        let overlap=false;
+        for(const [otherKey,other] of s.parts){if(otherKey===key || other.conflict)continue; const x=other.text.replace(/\s+/g,''),y=text.replace(/\s+/g,'');if(x&&y&&(x.startsWith(y)||y.startsWith(x))){voiceQueue.push({key,text:other.text+' / '+text,issue:true,confirmed:!!other.confirmed,proposed:text,fullText:text,previousText:other.text,previousEntry:other,sourceEntry:entry});overlap=true;break;}}
+        if(overlap){entry.conflict=true;} else voiceQueue.push({key,text,sourceEntry:entry});
       }
-      const before=candidates.length+candidateIssues.length;
-      const saved=parseAndAdd(last.text);
-      if(candidates.length+candidateIssues.length>before) { if(saved) el.transcript.value=s.base; else stagedText=el.transcript.value.trim(); reviewCandidates(); } else failListening('후보를 만들지 못했어요. 남아 있는 원문을 확인하거나 다시 말하기를 눌러 주세요.');
+      for(const [key,prior] of s.parts){const i=Number(key.slice(key.lastIndexOf(':')+1)); if(i>=e.results.length&&!prior.conflict&&!prior.deleted)queueIssue(s,key,prior.text,'(결과 목록에서 삭제됨)');}
+      s.interim=interim.join(' ');el.interim.textContent=s.interim?'인식 중: '+s.interim:'';
+      updateQueueStatus();
+      if(!candidates.some(c=>!c.approved) && !candidateIssues.length) flushQueue(s); else if(voiceQueue.some(q=>q.issue)) {render();} armWatchdog(s);
     };
-    s.timer=setTimeout(()=>{if(session===s && !s.started){s.ended=true;release(s);retire(s); failListening('음성 인식 시작 응답이 없어 연결을 초기화했어요. 다시 말하기를 누르거나 직접 입력해 주세요.');}},10000);
-    try { recognition.start(); } catch (_) { s.ended=true; release(s); failListening('음성 인식을 시작하지 못했어요. 다시 말하기를 누르거나 직접 입력해 주세요.'); }
+    recognition.onerror=e=>{const reasons={'not-allowed':'마이크 권한이 거부됐어요. 브라우저와 기기 권한을 확인해 주세요.','service-not-allowed':'음성 인식 서비스 사용이 허용되지 않았어요.','audio-capture':'마이크를 사용할 수 없어요.','network':'음성 인식 네트워크 연결에 문제가 있어요.','no-speech':'말소리를 듣지 못했어요.','aborted':'음성 인식이 중단됐어요.'};failSession(s,reasons[e.error]||'음성 인식 중 문제가 발생했어요.');};
+    recognition.onend=()=>{
+      finishRetiring(s);if(session!==s||s.ended)return;s.ended=true;release(s);
+      // Queue must remain reviewable on normal or unexpected termination.
+      updateQueueStatus();
+      const ok=commitApproved(s);render();flushQueue(null);
+      if(s.stopping) {message(ok?'음성 인식이 종료됐어요. 기존 합계는 유지됩니다.':'저장하지 못했어요. 후보를 다시 확인해 주세요.'); showRetry('음성 인식이 종료됐어요. 다시 말하기를 눌러 시작할 수 있어요.',true);}
+      else failListening('브라우저가 음성 인식을 종료했어요. 더 이상 듣고 있지 않아요. 다시 말하기를 눌러 주세요.'+(ok?' 기존 합계는 유지됩니다.':' 저장하지 못한 후보를 확인해 주세요.'));
+    };
+    s.timer=setTimeout(()=>{if(session===s&&!s.started)failSession(s,'음성 인식 시작 응답이 없어 연결을 종료했어요.');},10000);
+    try{recognition.start();}catch(_){s.ended=true;release(s);demote(s);failListening('음성 인식을 시작하지 못했어요. 다시 말하기를 누르거나 직접 입력해 주세요.');}
   }
-  function stop() { if(!session || session.ended) return; try { session.recognition.stop(); message('말하기를 마무리하고 있어요. 인식된 내용은 후보로 표시됩니다.'); } catch (_) { recover(); } }
-  function recover() { const s=session; if(!s) return; s.ended=true; updateText(s); release(s); retire(s); failListening('음성 연결을 초기화했어요. 전사 내용은 남겨 두었으며 자동 취합하지 않았어요. 다시 말하거나 내용을 확인하고 직접 취합해 주세요.'); }
+  function stop(){if(!session||session.ended||session.stopping)return;const s=session;s.stopping=true;try{message('마이크를 종료하고 있어요.');s.recognition.stop();}catch(_){recover();}}
+  function recover(){const s=session;if(!s)return;failSession(s,'음성 연결을 초기화했어요.');}
   el['confirm-candidates'].addEventListener('click',()=>confirmCandidates(true)); el['cancel-candidates'].addEventListener('click',cancelCandidates);
-  el.listen.addEventListener('click',start); el['retry-listen'].addEventListener('click',start); el.stop.addEventListener('click',stop); el.recover.addEventListener('click',recover); el.transcript.addEventListener('input',()=>{stagedText=null;}); el.add.addEventListener('click',()=>{const text=el.transcript.value.trim(); if(text && stagedText===text){message('같은 입력은 이미 후보로 만들었어요. 다시 추가하려면 내용을 수정하거나 다시 입력해 주세요.');return;} const before=candidates.length+candidateIssues.length; parseAndAdd(text); if(candidates.length+candidateIssues.length>before) { stagedText=text; reviewCandidates(); }}); el.undo.addEventListener('click',undo); el.copy.addEventListener('click',copy);
+  el.listen.addEventListener('click',start); el['retry-listen'].addEventListener('click',start); el.stop.addEventListener('click',stop); const candidateStop=$('candidate-stop'); if(candidateStop)candidateStop.addEventListener('click',stop); el.recover.addEventListener('click',recover); el.transcript.addEventListener('input',()=>{stagedText=null;}); el.add.addEventListener('click',()=>{const text=el.transcript.value.trim(); if(text && stagedText===text){message('같은 입력은 이미 후보로 만들었어요. 다시 추가하려면 내용을 수정하거나 다시 입력해 주세요.');return;} const before=candidates.length+candidateIssues.length; parseAndAdd(text); if(candidates.length+candidateIssues.length>before) { stagedText=text; reviewCandidates(); }}); el.undo.addEventListener('click',undo); el.copy.addEventListener('click',copy);
   el['clear-pending'].addEventListener('click',()=>{ if (!pending.length || !confirm('확인 필요 항목을 모두 지울까요?')) return; pending=[]; if(save()) message('확인 필요 항목을 지웠어요.'); render(); });
   el.clear.addEventListener('click',()=>{ if((!orders.length && !pending.length) || !confirm((candidates.length || candidateIssues.length ? '확인 전 후보는 그대로 남습니다. ' : '')+'기존 주문과 확인 필요 항목을 초기화할까요? 되돌릴 수 없습니다.')) return; orders=[]; batches=[]; pending=[]; if(save()) message('모든 주문을 초기화했어요.'); render(); });
+  if(document.addEventListener) document.addEventListener('visibilitychange',()=>{if(document.hidden&&session)failSession(session,'화면이 백그라운드로 전환되어 마이크 연결을 종료했어요.');});
   load(); render(); ui(false);
   window.CoffeeVoiceApp=Object.freeze({parseAndAdd, start, stop, recover, undo, getState:()=>({orders:orders.map(o=>({...o})),batches:batches.map(b=>[...b]),pending:pending.map(p=>({...p})),candidates:candidates.map(c=>({...c})),candidateIssues:candidateIssues.map(c=>({...c})),listening:!!session}),formatOrders,confirmCandidates,cancelCandidates});
 })();
